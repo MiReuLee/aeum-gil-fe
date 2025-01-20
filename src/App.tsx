@@ -1,25 +1,25 @@
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { Editor } from './pages/Editor';
 import { Journey } from './pages/Journey';
 
 function App() {
-  const [pages, setPages] = useState([]);
+  // const [pages, setPages] = useState([]);
 
-  const getPages = async () => {
-    return await (await fetch('http://api.aeum-gil.com/pages', {
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })).json();
-  }
+  // const getPages = async () => {
+  //   return await (await fetch('http://api.aeum-gil.com/pages', {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     }
+  //   })).json();
+  // }
 
-  useEffect(() => {
-    getPages().then((data) => {
-      setPages(data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getPages().then((data) => {
+  //     setPages(data);
+  //   });
+  // }, []);
 
   return (
     <>

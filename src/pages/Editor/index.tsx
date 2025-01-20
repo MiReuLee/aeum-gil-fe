@@ -217,13 +217,13 @@ export function Editor() {
       const { innerWidth, innerHeight } = window;
 
       let popupWidth = naturalWidth;
-      let popupHeight = naturalHeight;
+      // let popupHeight = naturalHeight;
 
       if (innerWidth < naturalWidth) {
         popupWidth = innerWidth;
-        popupHeight = (innerWidth / naturalWidth) * naturalHeight;
+        // popupHeight = (innerWidth / naturalWidth) * naturalHeight;
       } else if (innerHeight < naturalHeight) {
-        popupHeight = innerHeight;
+        // popupHeight = innerHeight;
         popupWidth = (innerHeight / naturalHeight) * naturalWidth;
       }
 
@@ -464,7 +464,7 @@ export function Editor() {
           <Typography variant='body1' fontSize={28} gutterBottom whiteSpace={'pre-wrap'} dangerouslySetInnerHTML={{ __html: content }} />
           {/* 선택지 */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {choiceOptions.map((choiceOption, index) => (
+            {choiceOptions.map((choiceOption) => (
               <Button variant='contained' fullWidth color='secondary'>
                 {choiceOption.content}
               </Button>
