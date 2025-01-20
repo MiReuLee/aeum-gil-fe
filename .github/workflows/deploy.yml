@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  laravel-tests:
+  deploy:
 
     runs-on: ubuntu-latest
 
@@ -41,4 +41,4 @@ jobs:
       run: npm run build
 
     - name: Deploy to S3
-      run: aws s3 sync build/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+      run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
