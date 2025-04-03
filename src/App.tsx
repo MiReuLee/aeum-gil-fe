@@ -1,30 +1,30 @@
 import { Box } from '@mui/material';
 import { RootState } from './store';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { ApiError, getGameChapters, getGameEndings, getGameItems, getGamePages, getStatus } from './utils/api';
+import { ApiError, getGameChapters, getGameEndings, getGameItems, getGamePages } from './utils/api';
 
 function App() {
-  const location = useLocation();
+  // const location = useLocation();
 
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const toLastPage = async () => {
-    try {
-      const { moveTargetType, targetId } = await getStatus();
+  // const toLastPage = async () => {
+  //   try {
+  //     const { moveTargetType, targetId } = await getStatus();
   
-      navigate(`/${moveTargetType === 1 ? 'pages' : 'endings'}/${targetId}`);
-    } catch (e) {
-      if (e instanceof ApiError && e.status === 404) {
-        navigate('/chapter/1');
-      } else {
-        throw e;
-      }
-    }
-  }
+  //     navigate(`/${moveTargetType === 1 ? 'pages' : 'endings'}/${targetId}`);
+  //   } catch (e) {
+  //     if (e instanceof ApiError && e.status === 404) {
+  //       navigate('/chapter/1');
+  //     } else {
+  //       throw e;
+  //     }
+  //   }
+  // }
 
   const getGameData = async () => {
     try {
@@ -38,9 +38,11 @@ function App() {
       dispatch({ type: 'game/setItems', payload: items });
       dispatch({ type: 'game/setEndings', payload: enddings });
 
-      if (!location.pathname.startsWith('/journey')) {
-        await toLastPage();
-      }
+      // if (!location.pathname.startsWith('/journey')) {
+      //   await toLastPage();
+      // }
+
+      navigate('/chapter/1');
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) {
         navigate('/login');

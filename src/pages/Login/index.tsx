@@ -47,12 +47,6 @@ export const Login = () => {
     }
   };
 
-
-  // {
-  //   "name": "admin",
-  //   "password": "dpdnarlfrhksflwk"
-  // }
-
   return (
     <>
       <MainBg gap={'10rem'}>
