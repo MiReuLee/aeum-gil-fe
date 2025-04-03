@@ -1,0 +1,54 @@
+/* Regular / SemiBold eot, woff, woff2 */
+@font-face {
+  font-family: 'Eulyoo1945';
+  src: url('/Eulyoo1945-Regular.eot');
+  src: url('/Eulyoo1945-Regular.eot?#iefix') format('embedded-opentype'),
+       url('/Eulyoo1945-Regular.woff') format('woff'),
+       url('/Eulyoo1945-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Eulyoo1945';
+  src: url('/Eulyoo1945-SemiBold.eot');
+  src: url('/Eulyoo1945-SemiBold.eot?#iefix') format('embedded-opentype'),
+       url('/Eulyoo1945-SemiBold.woff') format('woff'),
+       url('/Eulyoo1945-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* Old NewsPaper */
+@font-face {
+  font-family: 'OldNewspaperTypes';
+  src: url('/OldNewspaperTypes.eot');
+  src: url('/OldNewspaperTypes.eot?#iefix') format('embedded-opentype'),
+       url('/OldNewspaperTypes.woff') format('woff'),
+       url('/OldNewspaperTypes.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  font-family: 'Eulyoo1945', sans-serif;
+}
+
+* {
+  font-family: 'Eulyoo1945', sans-serif !important;
+}
+
+.old-newspaper {
+  font-family: 'OldNewspaperTypes', sans-serif !important;
+}
+
+.login-id::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 4px;
+  background: url('/input_border.png') no-repeat;
+  background-size: 100% auto;
+}

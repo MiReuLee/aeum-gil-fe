@@ -1,47 +1,66 @@
-// import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Box } from '@mui/material';
-import { Editor } from './pages/Editor';
-import { Journey } from './pages/Journey';
+import { RootState } from './store';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { ApiError, getGameChapters, getGameEndings, getGameItems, getGamePages, getStatus } from './utils/api';
 
 function App() {
-  // const [pages, setPages] = useState([]);
+  const location = useLocation();
 
-  // const getPages = async () => {
-  //   return await (await fetch('http://api.aeum-gil.com/pages', {
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     }
-  //   })).json();
-  // }
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   getPages().then((data) => {
-  //     setPages(data);
-  //   });
-  // }, []);
+  const toLastPage = async () => {
+    try {
+      const { moveTargetType, targetId } = await getStatus();
+  
+      navigate(`/${moveTargetType === 1 ? 'pages' : 'endings'}/${targetId}`);
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        navigate('/chapter/1');
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  const getGameData = async () => {
+    try {
+      const chapters = await getGameChapters();
+      const pages = await getGamePages();
+      const items = await getGameItems();
+      const enddings = await getGameEndings();
+
+      dispatch({ type: 'game/setChapters', payload: chapters });
+      dispatch({ type: 'game/setPages', payload: pages });
+      dispatch({ type: 'game/setItems', payload: items });
+      dispatch({ type: 'game/setEndings', payload: enddings });
+
+      if (!location.pathname.startsWith('/journey')) {
+        await toLastPage();
+      }
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 401) {
+        navigate('/login');
+      } else {
+        console.error('Error fetching game data:', e);
+      }
+    }
+  }
+
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login');
+    } else {
+      getGameData();
+    }
+  }, [isLoggedIn]);
 
   return (
     <>
-      <BrowserRouter>
-        <Box component="nav" display="flex" gap="4px">
-          <Link to="/journey">저니맵</Link>
-          <Link to="/pages">신규</Link>
-          {/* {pages.map((page: any) => (
-            <Link key={page.id} to={`/pages/${page.id}`}>{page.title}</Link>
-          ))} */}
-        </Box>
-        <Routes>
-          <Route path="/journey" element={<Journey />} />
-        </Routes>
-        <Routes>
-          <Route path="/pages" element={<Editor />} />
-        </Routes>
-        <Routes>
-          <Route path="/pages/:pageId" element={<Editor />} />
-        </Routes>
-      </BrowserRouter>
-
       <Box component="footer" display="flex" justifyContent="center" alignItems="center" height="100px">
         <Box>© 2025 aeum-gil.com</Box>
         <Box ml="auto">Powered by aeum-gil</Box>
