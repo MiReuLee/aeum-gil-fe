@@ -8,6 +8,7 @@ import { putGameRecords, restoreGameReords } from '../../utils/api';
 import { $Chapter, $ChoiceOption, $Page } from '../../types';
 import Popup from '../../components/Popup';
 import { addPlayedPages } from '../../store/gameSlice';
+import { logout } from '../../store/authSlice';
 
 const colors = {
   W00: '#ECECEC',
@@ -94,6 +95,8 @@ export const Page = () => {
     setIsPopupOpen(false);
     navigate('/chapter/1');
   }
+
+  const handleClickExit = () => dispatch(logout());
 
   return (
     <>
@@ -258,6 +261,16 @@ export const Page = () => {
                 color: colors.B01,
                 fontSize: '28px',
               }}>처음부터 시작하기</span>
+            </Button>
+
+            <Button
+              onClick={handleClickExit}
+            >
+              <span style={{
+                fontWeight: 900,
+                color: colors.B01,
+                fontSize: '28px',
+              }}>게임 나가기</span>
             </Button>
           </Popup>
         )}
