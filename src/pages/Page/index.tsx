@@ -1,13 +1,13 @@
 import { Button, Grid2, Tab, Tabs } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useTheme } from '@mui/material/styles';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { putGameRecords } from '../../utils/api';
-import { $ChoiceOption, $Page } from '../../types';
+import { $Chapter, $ChoiceOption, $Page } from '../../types';
 import Popup from '../../components/Popup';
-
-const padding = `0 ${100 / 3 / 2}%`;
+import { addPlayedPages } from '../../store/gameSlice';
 
 const colors = {
   W00: '#ECECEC',
@@ -18,12 +18,23 @@ const colors = {
 }
 
 export const Page = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const padding = {
+    [theme.breakpoints.up('md')]: {
+      padding: `0 ${100 / 6}%`
+    }
+  };
 
   const { pageId } = useParams() as { pageId: string };
   const pages = useSelector((state: RootState) => state.game.pages);
 
+  const playedPages = useSelector((state: RootState) => state.game.playedPages);
+
   const [page, setPage] = useState<$Page | null>(null);
+  const [chapter, setChapter] = useState<$Chapter | null>(null);
   const [tabIndex, setTabIndex] = useState(0); // 현재 선택된 탭의 인덱스
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [opacity, setOpacity] = useState(1); // 애니메이션 상태
@@ -52,8 +63,27 @@ export const Page = () => {
     };
   }, [pageId, pages]);
 
+  useEffect(() => {
+    if (page) {
+      const _chapter = page?.chapter as $Chapter;
+      setChapter(_chapter);
+    }
+  }, [page]);
+
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = contentRef.current.scrollHeight;
+    }
+  }, [playedPages]);
+
   const handleClickChoiceOption = async (choiceOption: $ChoiceOption) => {
-    await putGameRecords({ pageId: Number(pageId), choiceOptionId: choiceOption.choiceOptionId });
+    const _pageId = Number(pageId);
+
+    dispatch(addPlayedPages(_pageId));
+
+    await putGameRecords({ pageId: _pageId, choiceOptionId: choiceOption.choiceOptionId });
   };
 
   return (
@@ -72,13 +102,21 @@ export const Page = () => {
         }}
       >
         {/* Top Bar */}
-        <Grid2 width={'100%'} height={'64px'} lineHeight={'64px'} color={'#919191'} sx={{
-          background: colors.B01,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }} padding={padding}>
-          {page?.title}
+        <Grid2
+          width={'100%'}
+          height={'64px'}
+          lineHeight={'64px'}
+          color={'#919191'}
+          sx={{
+            background: colors.B01,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            ...padding,
+            padding: '1rem'
+          }}
+        >
+          {chapter?.title} - {page?.place}
 
           <Button
             sx={{
@@ -92,14 +130,36 @@ export const Page = () => {
           />
         </Grid2>
 
-        <Grid2 width={'100%'} height={'23%'} padding={padding} sx={{ background: colors.B03 }}>
+        <Grid2 width={'100%'} height={'23%'} sx={{ background: colors.B03, ...padding }}>
           <img src={page?.img} width={'100%'} height={'100%'} style={{ objectFit: 'cover' }} />
         </Grid2>
 
-        <Grid2 width={'100%'} height={'40%'} whiteSpace={'pre-wrap'} padding={padding}>
-          <div style={{ padding: '1rem' }}>
-            {page?.text}
-          </div>
+        <Grid2 width={'100%'} height={'40%'} whiteSpace={'pre-wrap'} sx={{ overflowY: 'auto', ...padding }} ref={contentRef}>
+          <Grid2
+            sx={{
+              wordBreak: 'keep-all',
+              lineHeight: '1.8',
+              padding: `1rem ${100 / 12}%`,
+              [theme.breakpoints.up('sm')]: {
+                padding: '1rem', // 화면 크기가 'sm' 이상일 때
+              },
+            }}
+          >
+            <div>{
+              playedPages.reduce((str, e) => {
+                const page = pages.find((p) => p.pageId === e)
+            
+                if (page) {
+                  const { text } = JSON.parse(page.content);
+            
+                  str += `${text}\n\n`;
+                }
+            
+                return str;
+              }, '')
+            }</div>
+            <div style={{ minHeight: 'calc(40vh - 2rem)' }}>{page?.text}</div>
+          </Grid2>
         </Grid2>
 
         {/* Tab 선택지 / 주머니 / 상태 */}
@@ -109,7 +169,16 @@ export const Page = () => {
             onChange={(_, newValue) => setTabIndex(newValue)}
             textColor="inherit"
             indicatorColor="primary"
-            sx={{ background: colors.B02, padding, color: colors.W01 }}
+            sx={{
+              background: colors.B02,
+              color: colors.W01,
+              ...padding,
+              '& .MuiTabs-flexContainer': {
+                [theme.breakpoints.down('md')]: {
+                  justifyContent: 'space-around',
+                }
+              },
+            }}
           >
             <Tab label="선택지" />
             <Tab label="주머니" />
@@ -119,9 +188,21 @@ export const Page = () => {
           <Grid2
             display={'grid'}
             container
-            gridTemplateColumns={'1fr 1fr'}
-            flex={1} sx={{ background: colors.B01 }} padding={padding}
+            flex={1}
             color={colors.W01}
+            sx={{
+              background: colors.B01,
+
+              padding: '1rem 8%',
+              gridTemplateColumns: '1fr',
+              gridTemplateRows: 'repeat(4, 1fr)',
+
+              [theme.breakpoints.up('md')]: {
+                ...padding[theme.breakpoints.up('md')],
+                gridTemplateColumns: '1fr 1fr',
+                gridTemplateRows: '1fr 1fr'
+              }
+            }}
           >
             {page?.choiceOptions.map((choiceOption) => (
               <Link
@@ -129,7 +210,6 @@ export const Page = () => {
                 to={`/${choiceOption.moveTargetType === 1 ? 'pages' : 'ending'}/${choiceOption.targetId}`}
                 style={{
                   textDecoration: 'none', color: colors.W01, display: 'flex', alignItems: 'center',
-                  maxHeight: '88px'
                 }}
                 onClick={() => handleClickChoiceOption(choiceOption)}
               >

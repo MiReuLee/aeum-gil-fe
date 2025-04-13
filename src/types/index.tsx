@@ -14,11 +14,11 @@ export interface $ChoiceOption {
 }
 
 export interface $Page {
-  pageId: string;
-  title: string;
+  pageId: number;
   content: string;
   choiceOptions: $ChoiceOption[];
-  chatper: $Chapter;
+  chapter: $Chapter;
+  place: string;
 
   text?: string;
   img?: string;

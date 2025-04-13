@@ -6,6 +6,7 @@ interface GameState {
   pages: $Page[];
   items: $Item[];
   endings: $Ending[];
+  playedPages: number[];
 }
 
 const initialState: GameState = {
@@ -13,6 +14,7 @@ const initialState: GameState = {
   pages: [],
   items: [],
   endings: [],
+  playedPages: [],
 }
 
 const gameSlice = createSlice({
@@ -31,8 +33,11 @@ const gameSlice = createSlice({
     setEndings(state, action: PayloadAction<$Ending[]>) {
       state.endings = action.payload;
     },
+    addPlayedPages(state, action: PayloadAction<number>) {
+      state.playedPages.push(action.payload);
+    },
   },
 });
 
-export const { setChapters, setPages, setItems, setEndings } = gameSlice.actions;
+export const { setChapters, setPages, setItems, setEndings, addPlayedPages } = gameSlice.actions;
 export default gameSlice.reducer;
