@@ -79,6 +79,7 @@ export const Login = () => {
 
           <TextField
             label="비밀번호"
+            type="password"
             variant="standard"
             slotProps={{
               input: {
