@@ -1,4 +1,4 @@
-import { Grid2, keyframes } from '@mui/material';
+import { Grid2, useTheme } from '@mui/material';
 
 interface MainBgProps {
   children: React.ReactNode;
@@ -11,69 +11,62 @@ const COLOR_BGS = {
   dark: 'rgba(30, 30, 30, 0.8), rgba(30, 30, 30, 0.45)',
 }
 
-const growAnimation = keyframes`
-  0% {
-    transform: rotate(-25deg) translateX(-50%) scale(1);
-  }
-  100% {
-    transform: rotate(-25deg) translateX(-50%) scale(1.2);
-  }
-`;
-const growAnimation2 = keyframes`
-  0% {
-    transform: rotate(25deg) scale(1);
-  }
-  100% {
-    transform: rotate(25deg) scale(1.2);
-  }
-`;
+const MainBg = ({ children, gap, colorBg = 'light' }: MainBgProps) => {
+  const theme = useTheme();
 
-const MainBg = ({ children, gap, colorBg }: MainBgProps) => {
+  const handPositions = [
+    [{ left: '100%', top: '50%', transform: 'translate(-120%, -200%)' }, { left: '100%', top: '0', transform: 'translate(-150%, 10%)' }],
+    [{ left: '50%', top: '0', transform: 'translate(-100%, 20%)' }, { left: '50%', top: '0', transform: 'translate(-120%, -30%)' }],
+    [{ left: '100%', top: '50%', transform: 'translate(-120%, 0%) rotate(45deg)' }, { left: '100%', top: '100%', transform: 'translate(-90%, -110%) rotate(45deg)' }],
+    [{ left: '50%', top: '100%', transform: 'translate(-150%, -200%) rotate(165deg)' }, { left: '50%', top: '100%', transform: 'translate(-150%, -50%) rotate(205deg)' }],
+    [{ left: '0', top: '50%', transform: 'translate(-20%, -70%) rotate(220deg)' }, { left: '0', top: '50%', transform: 'translate(-30%, -60%) rotate(220deg)' }],
+  ]
+
   return (
     <Grid2
       container
-      direction={'column'}
-      alignItems={'center'}
-      justifyContent={'center'}
-      gap={gap}
       width={'100vw'}
       height={'100vh'}
       sx={{
-        backgroundImage: `linear-gradient(${COLOR_BGS[colorBg || 'light']}), url(/main_bg.png)`,
+        backgroundImage: `linear-gradient(${COLOR_BGS[colorBg]}), url(/main_bg.png)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {children}
-
+      {handPositions.map((position, index) => (
+        <Grid2
+          key={index}
+          position={'absolute'}
+          sx={{
+            width: '8rem',
+            ...position[0],
+            [theme.breakpoints.up('md')]: {
+              width: '14.5vw',
+              ...position[1],
+            },
+            ...(colorBg === 'light' ? { opacity: 0.15 } : { filter: 'invert(1)' }),
+          }}
+        >
+          <img
+            src={`/img_handprint0${index + 1}.png`}
+            style={{ width: '100%' }}
+          ></img>
+        </Grid2>
+      ))}
+      
       <Grid2
-        sx={{
-          position: 'absolute', bottom: '-90px', left: 'calc(50% - 200px)',
-          // 1초 간격으로 무한 반복
-          animation: `${growAnimation} 1s forwards`,
-          animationDelay: '0.5s',
-          animationIterationCount: 'infinite',
-          animationDirection: 'alternate',
-          animationTimingFunction: 'ease-in-out',
-          animationFillMode: 'forwards',
-          animationPlayState: 'running',
-          ...(colorBg === 'light' ? {} : { filter: 'invert(1)' }),
-        }}
+        container
+        direction={'column'}
+        alignItems={'center'}
+        justifyContent={'center'}
+        gap={gap}
+        width={'100%'}
+        height={'100%'}
+        position={'relative'}
       >
-        <img
-          src="/hand.png"
-        ></img>
-      </Grid2>
-
-      <Grid2 sx={{
-        position: 'absolute', bottom: '-90px', left: '80%', animation: `${growAnimation2} 1s forwards`,
-        ...(colorBg === 'light' ? {} : { filter: 'invert(1)' }),
-        }}>
-        <img
-          src="/hand.png"
-        ></img>
+        {children}
       </Grid2>
     </Grid2>
   );
