@@ -131,3 +131,5 @@ export const getGameItems = async () => await get('game/items');
 export const getGameEndings = async () => await get('game/endings');
 
 export const putGameRecords = async (records: { pageId: number, choiceOptionId: number }) => await put('game/play-records', records);
+
+export const restoreGameReords = async (pageId: number) => await put('game/play-status/restore', { pageId })

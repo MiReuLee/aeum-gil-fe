@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { putGameRecords } from '../../utils/api';
+import { putGameRecords, restoreGameReords } from '../../utils/api';
 import { $Chapter, $ChoiceOption, $Page } from '../../types';
 import Popup from '../../components/Popup';
 import { addPlayedPages } from '../../store/gameSlice';
@@ -27,6 +27,8 @@ export const Page = () => {
       padding: `0 ${100 / 6}%`
     }
   };
+
+  const chapters = useSelector((state: RootState) => state.game.chapters);
 
   const { pageId } = useParams() as { pageId: string };
   const pages = useSelector((state: RootState) => state.game.pages);
@@ -85,6 +87,13 @@ export const Page = () => {
 
     await putGameRecords({ pageId: _pageId, choiceOptionId: choiceOption.choiceOptionId });
   };
+
+  const handleClickRestore = async () => {
+    await restoreGameReords(chapters[0].firstPageId)
+
+    setIsPopupOpen(false);
+    navigate('/chapter/1');
+  }
 
   return (
     <>
@@ -242,10 +251,7 @@ export const Page = () => {
         {isPopupOpen && (
           <Popup close={() => setIsPopupOpen(false)}>
             <Button
-              onClick={() => {
-                setIsPopupOpen(false);
-                navigate('/chapter/1');
-              }}
+              onClick={handleClickRestore}
             >
               <span style={{
                 fontWeight: 900,

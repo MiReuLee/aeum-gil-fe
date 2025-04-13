@@ -15,7 +15,7 @@ function App() {
     try {
       const { moveTargetType, targetId } = await getStatus();
   
-      navigate(`/${moveTargetType === 1 ? 'pages' : 'endings'}/${targetId}`);
+      navigate(`/${moveTargetType === 1 ? 'pages' : 'ending'}/${targetId}`);
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {
         navigate('/chapter/1');
