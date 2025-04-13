@@ -253,25 +253,27 @@ export const Page = () => {
 
         {isPopupOpen && (
           <Popup close={() => setIsPopupOpen(false)}>
-            <Button
-              onClick={handleClickRestore}
-            >
-              <span style={{
-                fontWeight: 900,
-                color: colors.B01,
-                fontSize: '28px',
-              }}>처음부터 시작하기</span>
-            </Button>
+            <Grid2 container style={{  flexDirection: 'column', gap: '3rem' }}>
+              <Button
+                onClick={handleClickRestore}
+              >
+                <span style={{
+                  fontWeight: 900,
+                  color: colors.B01,
+                  fontSize: '28px',
+                }}>처음부터 시작하기</span>
+              </Button>
 
-            <Button
-              onClick={handleClickExit}
-            >
-              <span style={{
-                fontWeight: 900,
-                color: colors.B01,
-                fontSize: '28px',
-              }}>게임 나가기</span>
-            </Button>
+              <Button
+                onClick={handleClickExit}
+              >
+                <span style={{
+                  fontWeight: 900,
+                  color: colors.B01,
+                  fontSize: '28px',
+                }}>게임 나가기</span>
+              </Button>
+            </Grid2>
           </Popup>
         )}
       </Grid2>
