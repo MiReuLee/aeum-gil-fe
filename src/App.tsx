@@ -61,10 +61,10 @@ function App() {
 
   return (
     <>
-      <Box component="footer" display="flex" justifyContent="center" alignItems="center" height="100px">
+      {/* <Box component="footer" display="flex" justifyContent="center" alignItems="center" height="100px">
         <Box>© 2025 aeum-gil.com</Box>
         <Box ml="auto">Powered by aeum-gil</Box>
-      </Box>
+      </Box> */}
     </>
   );
 };
