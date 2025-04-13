@@ -46,7 +46,7 @@ const MainBg = ({ children, gap, colorBg = 'light' }: MainBgProps) => {
               width: '14.5vw',
               ...position[1],
             },
-            ...(colorBg === 'light' ? { opacity: 0.15 } : { filter: 'invert(1)' }),
+            ...(colorBg === 'light' ? { opacity: 0.15 } : { filter: 'invert(0.3)' }),
           }}
         >
           <img
