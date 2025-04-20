@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { ApiError, getGameChapters, getGameEndings, getGameItems, getGamePages, getStatus } from './utils/api';
+import { Button } from '@mui/material';
 
 function App() {
   const location = useLocation();
@@ -49,6 +50,10 @@ function App() {
     }
   }
 
+  const resetLocalStorage = () => {
+    localStorage.clear();
+    window.location.reload();
+  }
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -60,10 +65,9 @@ function App() {
 
   return (
     <>
-      {/* <Box component="footer" display="flex" justifyContent="center" alignItems="center" height="100px">
-        <Box>© 2025 aeum-gil.com</Box>
-        <Box ml="auto">Powered by aeum-gil</Box>
-      </Box> */}
+      <Button onClick={resetLocalStorage} sx={{ width: '100%' }}>
+        로컬 스토리지 초기화
+      </Button>
     </>
   );
 };
