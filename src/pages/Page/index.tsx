@@ -50,12 +50,12 @@ export const Page = () => {
   const [chapter, setChapter] = useState<$Chapter | null>(null);
   const [tabIndex, setTabIndex] = useState(0); // 현재 선택된 탭의 인덱스
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [opacity, setOpacity] = useState(0); // 애니메이션 상태
+  const [opacity, setOpacity] = useState(1); // 애니메이션 상태
 
   const [contentHeight, setContentHeight] = useState(0);
 
   useEffect(() => {
-    setOpacity(1); // 애니메이션 시작
+    setOpacity(0); // 애니메이션 시작
 
     const timeout = setTimeout(() => {
       if (pageId && pages.length > 0) {
@@ -68,13 +68,11 @@ export const Page = () => {
           });
         }
       }
-
-      setOpacity(1); // 다시 보이게 설정
     }, 300); // 애니메이션이 끝난 후에 페이지를 설정
 
     return () => {
       clearTimeout(timeout);
-      setOpacity(0); // 애니메이션 종료
+      setOpacity(1); // 애니메이션 종료
     };
   }, [pageId, pages]);
 
@@ -131,10 +129,23 @@ export const Page = () => {
         textAlign={'left'}
         sx={{
           background: colors.W00, position: 'relative', overflow: 'hidden',
-          opacity,
-          transition: 'opacity 0.3s ease-in-out',
         }}
       >
+        <Grid2
+          position={'absolute'}
+          top={0}
+          left={0}
+          width={'100%'}
+          height={'100%'}
+          zIndex={1}
+          sx={{
+            background: '#000',
+            opacity,
+            transition: 'opacity 2s ease-in-out',
+            pointerEvents: 'none',
+          }}
+        />
+
         {/* Top Bar */}
         <Grid2
           width={'100%'}
@@ -265,7 +276,7 @@ export const Page = () => {
                 disableRipple
                 sx={{
                   opacity: 0,
-                  animation: `${fadeIn} 2s ease-in-out forwards`,
+                  animation: `${fadeIn} 3s ease-in-out forwards`,
                   backgroundSize: '100% 100%',
                   fontWeight: 900,
                   color: colors.W01,
