@@ -22,6 +22,7 @@ export interface $Page {
 
   text?: string;
   img?: string;
+  object?: string;
 }
 
 export interface $Item {
@@ -35,4 +36,8 @@ export interface $Ending {
   title: string;
   description: string;
   returnPageId: number;
+  content: string;
+
+  text?: string;
+  img?: string;
 }

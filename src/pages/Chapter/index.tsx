@@ -18,7 +18,7 @@ export const Chapter = () => {
     if (chapters.length) {
       setChapter(chapters[Number(chapterId) - 1] as $Chapter);
     }
-  }, [chapters]);
+  }, [chapters, chapterId]);
 
   const handleClick = async () => {
     if (!chapter) return

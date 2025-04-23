@@ -1,14 +1,15 @@
 import { Button, Grid2, Tab, Tabs } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { keyframes, useTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { putGameRecords, restoreGameReords } from '../../utils/api';
 import { $Chapter, $ChoiceOption, $Page } from '../../types';
 import Popup from '../../components/Popup';
-import { addPlayedPages } from '../../store/gameSlice';
+import { addPlayedPages, clearPlayedPages } from '../../store/gameSlice';
 import { logout } from '../../store/authSlice';
+import { delay } from '../../utils';
 
 const colors = {
   W00: '#ECECEC',
@@ -17,6 +18,15 @@ const colors = {
   B02: '#2D2D2D',
   B03: '#000',
 }
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
 
 export const Page = () => {
   const theme = useTheme();
@@ -40,10 +50,12 @@ export const Page = () => {
   const [chapter, setChapter] = useState<$Chapter | null>(null);
   const [tabIndex, setTabIndex] = useState(0); // 현재 선택된 탭의 인덱스
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [opacity, setOpacity] = useState(1); // 애니메이션 상태
+  const [opacity, setOpacity] = useState(0); // 애니메이션 상태
+
+  const [contentHeight, setContentHeight] = useState(0);
 
   useEffect(() => {
-    setOpacity(0.7); // 애니메이션 시작
+    setOpacity(1); // 애니메이션 시작
 
     const timeout = setTimeout(() => {
       if (pageId && pages.length > 0) {
@@ -62,7 +74,7 @@ export const Page = () => {
 
     return () => {
       clearTimeout(timeout);
-      setOpacity(1); // 애니메이션 종료
+      setOpacity(0); // 애니메이션 종료
     };
   }, [pageId, pages]);
 
@@ -77,20 +89,30 @@ export const Page = () => {
 
   useEffect(() => {
     if (contentRef.current) {
+      setContentHeight(contentRef.current.offsetHeight);
       contentRef.current.scrollTop = contentRef.current.scrollHeight;
     }
   }, [playedPages]);
 
   const handleClickChoiceOption = async (choiceOption: $ChoiceOption) => {
+    setOpacity(0);
+
+    await delay(300);
+
+    setOpacity(1);
+
     const _pageId = Number(pageId);
-
-    dispatch(addPlayedPages(_pageId));
-
+    
     await putGameRecords({ pageId: _pageId, choiceOptionId: choiceOption.choiceOptionId });
+    
+    dispatch(addPlayedPages(_pageId));
+    navigate(`/${choiceOption.moveTargetType === 1 ? 'pages' : 'ending'}/${choiceOption.targetId}`);
   };
 
   const handleClickRestore = async () => {
     await restoreGameReords(chapters[0].firstPageId)
+    
+    dispatch(clearPlayedPages());
 
     setIsPopupOpen(false);
     navigate('/chapter/1');
@@ -146,7 +168,13 @@ export const Page = () => {
           <img src={page?.img} width={'100%'} height={'100%'} style={{ objectFit: 'cover' }} />
         </Grid2>
 
-        <Grid2 width={'100%'} height={'40%'} whiteSpace={'pre-wrap'} sx={{ overflowY: 'auto', ...padding }} ref={contentRef}>
+        <Grid2
+          width={'100%'}
+          whiteSpace={'pre-wrap'}
+          flex={1}
+          sx={{ overflowY: 'auto', ...padding }}
+          ref={contentRef}
+        >
           <Grid2
             sx={{
               wordBreak: 'keep-all',
@@ -157,7 +185,7 @@ export const Page = () => {
               },
             }}
           >
-            <div>{
+            <Grid2>{
               playedPages.reduce((str, e) => {
                 const page = pages.find((p) => p.pageId === e)
             
@@ -169,13 +197,21 @@ export const Page = () => {
             
                 return str;
               }, '')
-            }</div>
-            <div style={{ minHeight: 'calc(40vh - 2rem)' }}>{page?.text}</div>
+            }</Grid2>
+            <Grid2 container sx={{ minHeight: `calc(${contentHeight}px - 2rem)` }}>
+              {page?.object && (
+                <img 
+                  src={page.object}
+                  style={{ height: `calc(${contentHeight}px - 4rem)` }}
+                />
+              )}
+              <Grid2 flex={1}>{page?.text}</Grid2>
+            </Grid2>
           </Grid2>
         </Grid2>
 
-        {/* Tab 선택지 / 주머니 / 상태 */}
-        <Grid2 container direction={'column'} width={'100%'} flex={1}>
+        {/* Tab 선택지 / 주머니 */}
+        <Grid2 container maxHeight={'300px'} direction={'column'} width={'100%'} flex={1}>
           <Tabs
             value={tabIndex}
             onChange={(_, newValue) => setTabIndex(newValue)}
@@ -194,7 +230,6 @@ export const Page = () => {
           >
             <Tab label="선택지" />
             <Tab label="주머니" />
-            <Tab label="상태" />
           </Tabs>
 
           <Grid2
@@ -217,36 +252,36 @@ export const Page = () => {
             }}
           >
             {page?.choiceOptions.map((choiceOption) => (
-              <Link
+              <Grid2
+                component={Button}
                 key={choiceOption.choiceOptionId}
-                to={`/${choiceOption.moveTargetType === 1 ? 'pages' : 'ending'}/${choiceOption.targetId}`}
-                style={{
-                  textDecoration: 'none', color: colors.W01, display: 'flex', alignItems: 'center',
+                container
+                alignItems={'center'}
+                justifyContent={'flex-start'}
+                width={'100%'}
+                height={'100%'}
+                textAlign={'left'}
+                padding={'0 1rem'}
+                disableRipple
+                sx={{
+                  opacity: 0,
+                  animation: `${fadeIn} 2s ease-in-out forwards`,
+                  backgroundSize: '100% 100%',
+                  fontWeight: 900,
+                  color: colors.W01,
+                  backgroundColor: 'transparent',
+                  ':hover': {
+                    backgroundImage: `url('/option_hover.png')`,
+                  },
+                  ':active': {
+                    backgroundImage: `url('/option_active.png')`,
+                    color: colors.B02,
+                  },
                 }}
                 onClick={() => handleClickChoiceOption(choiceOption)}
               >
-                <Grid2
-                  container
-                  alignItems={'center'}
-                  width={'100%'}
-                  height={'100%'}
-                  textAlign={'left'}
-                  padding={'0 1rem'}
-                  sx={{
-                    backgroundSize: '100% 100%',
-                    fontWeight: 900,
-                    ':hover': {
-                      backgroundImage: `url('/option_hover.png')`,
-                    },
-                    ':active': {
-                      backgroundImage: `url('/option_active.png')`,
-                      color: colors.B02,
-                    },
-                  }}
-                >
-                  {choiceOption.content}
-                </Grid2>
-              </Link>
+                {choiceOption.content}
+              </Grid2>
             ))}
           </Grid2>
         </Grid2>

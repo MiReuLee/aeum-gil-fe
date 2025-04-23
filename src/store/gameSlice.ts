@@ -36,8 +36,11 @@ const gameSlice = createSlice({
     addPlayedPages(state, action: PayloadAction<number>) {
       state.playedPages.push(action.payload);
     },
+    clearPlayedPages(state) {
+      state.playedPages = [];
+    }
   },
 });
 
-export const { setChapters, setPages, setItems, setEndings, addPlayedPages } = gameSlice.actions;
+export const { setChapters, setPages, setItems, setEndings, addPlayedPages, clearPlayedPages } = gameSlice.actions;
 export default gameSlice.reducer;
