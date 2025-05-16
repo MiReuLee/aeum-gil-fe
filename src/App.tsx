@@ -1,7 +1,7 @@
 import { RootState } from './store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { ApiError, getGameChapters, getGameEndings, getGameItems, getGamePages, getStatus } from './utils/api';
 import { Button } from '@mui/material';
 
@@ -12,7 +12,7 @@ function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const toLastPage = async () => {
+  const toLastPage = useCallback(async () => {
     try {
       const { moveTargetType, targetId } = await getStatus();
   
@@ -24,9 +24,11 @@ function App() {
         throw e;
       }
     }
-  }
+  }, [navigate]);
 
-  const getGameData = async () => {
+  const getGameData = useCallback(async () => {
+    console.trace('getGameData');
+
     try {
       const chapters = await getGameChapters();
       const pages = await getGamePages();
@@ -48,7 +50,7 @@ function App() {
         console.error('Error fetching game data:', e);
       }
     }
-  }
+  }, [dispatch, location.pathname, navigate, toLastPage]);
 
   const resetLocalStorage = () => {
     localStorage.clear();
@@ -57,6 +59,8 @@ function App() {
 
   useEffect(() => {
     if (!isLoggedIn) {
+      if (location.pathname === '/login' || location.pathname === '/register') return
+
       navigate('/login');
     } else {
       getGameData();

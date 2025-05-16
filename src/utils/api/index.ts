@@ -71,6 +71,16 @@ const del = (url: string) => {
 
 
 
+export const signUp = async (id: string, password: string) => {
+  const res = await post('auth/sign-up', {
+    name: id,
+    password,
+  }, false);
+
+  const token = await res.text();
+
+  return token;
+};
 
 export const login = async (id: string, password: string) => {
   const res = await post('auth/sign-in', {
