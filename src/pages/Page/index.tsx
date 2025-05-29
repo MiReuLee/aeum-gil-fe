@@ -7,17 +7,9 @@ import { RootState } from '../../store';
 import { putGameRecords, restoreGameReords } from '../../utils/api';
 import { $Chapter, $ChoiceOption, $Page } from '../../types';
 import Popup from '../../components/Popup';
-import { addPlayedPages, clearPlayedPages } from '../../store/gameSlice';
+import { addPlayedPages, clearPlayedPages, setOwnedItems } from '../../store/gameSlice';
 import { logout } from '../../store/authSlice';
-import { delay } from '../../utils';
-
-const colors = {
-  W00: '#ECECEC',
-  W01: '#FFF',
-  B01: '#1E1E1E',
-  B02: '#2D2D2D',
-  B03: '#000',
-}
+import { colors, delay } from '../../utils';
 
 const fadeIn = keyframes`
   from {
@@ -43,6 +35,8 @@ export const Page = () => {
 
   const { pageId } = useParams() as { pageId: string };
   const pages = useSelector((state: RootState) => state.game.pages);
+  const ownedItems = useSelector((state: RootState) => state.game.ownedItems);
+  const items = useSelector((state: RootState) => state.game.items);
 
   const playedPages = useSelector((state: RootState) => state.game.playedPages);
 
@@ -51,36 +45,33 @@ export const Page = () => {
   const [tabIndex, setTabIndex] = useState(0); // 현재 선택된 탭의 인덱스
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [opacity, setOpacity] = useState(1); // 애니메이션 상태
+  const [visible, setVisible] = useState(true); // 페이지 전환 시 fadeOut 애니메이션을 위한 상태
 
   const [contentHeight, setContentHeight] = useState(0);
 
   useEffect(() => {
-    setOpacity(0); // 애니메이션 시작
-
-    const timeout = setTimeout(() => {
-      if (pageId && pages.length > 0) {
-        const _page = pages.find((p) => String(p.pageId) === pageId) as $Page;
-  
-        if (_page) {
-          setPage({
-            ..._page,
-            ...JSON.parse(_page.content),
-          });
-        }
-      }
-    }, 300); // 애니메이션이 끝난 후에 페이지를 설정
-
-    return () => {
-      clearTimeout(timeout);
-      setOpacity(1); // 애니메이션 종료
-    };
-  }, [pageId, pages]);
-
-  useEffect(() => {
-    if (page) {
-      const _chapter = page?.chapter as $Chapter;
-      setChapter(_chapter);
+    const newPage = pages.find((p) => String(p.pageId) === pageId) as $Page;
+    if (newPage) {
+      setPage({ ...newPage, ...JSON.parse(newPage.content) });
     }
+  }, [pageId, pages])
+  
+  
+  useEffect(() => {
+    if (!page) return;
+
+    const _chapter = page?.chapter as $Chapter;
+    setChapter(_chapter);
+
+    // 데이터가 바뀌면 visible을 true로 설정
+    setVisible(true);
+
+    // 0.3초 뒤에 false로 변경하여 opacity 0 적용
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 300);
+
+    return () => clearTimeout(timer); // 정리
   }, [page]);
 
   const contentRef = useRef<HTMLDivElement>(null);
@@ -101,10 +92,13 @@ export const Page = () => {
 
     const _pageId = Number(pageId);
     
-    await putGameRecords({ pageId: _pageId, choiceOptionId: choiceOption.choiceOptionId });
+    const {
+      moveTargetType: _moveTargetType, ownedItems, targetId: _targetId
+    } = await putGameRecords({ pageId: _pageId, choiceOptionId: choiceOption.choiceOptionId });
     
     dispatch(addPlayedPages(_pageId));
-    navigate(`/${choiceOption.moveTargetType === 1 ? 'pages' : 'ending'}/${choiceOption.targetId}`);
+    if (ownedItems) dispatch(setOwnedItems(ownedItems));
+    navigate(`/${_moveTargetType === 1 ? 'pages' : 'ending'}/${_targetId}`);
   };
 
   const handleClickRestore = async () => {
@@ -117,6 +111,8 @@ export const Page = () => {
   }
 
   const handleClickExit = () => dispatch(logout());
+
+  const getItemDetails = (itemId: number) => items.find(i => i.id === itemId);
 
   return (
     <>
@@ -132,6 +128,7 @@ export const Page = () => {
         }}
       >
         <Grid2
+          key={page?.pageId}
           position={'absolute'}
           top={0}
           left={0}
@@ -140,9 +137,9 @@ export const Page = () => {
           zIndex={1}
           sx={{
             background: '#000',
-            opacity,
-            transition: 'opacity 2s ease-in-out',
             pointerEvents: 'none',
+            opacity: visible ? 1 : 0,
+            transition: 'opacity 3s ease-in-out',
           }}
         />
 
@@ -262,38 +259,101 @@ export const Page = () => {
               }
             }}
           >
-            {page?.choiceOptions.map((choiceOption) => (
-              <Grid2
-                component={Button}
-                key={choiceOption.choiceOptionId}
-                container
-                alignItems={'center'}
-                justifyContent={'flex-start'}
-                width={'100%'}
-                height={'100%'}
-                textAlign={'left'}
-                padding={'0 1rem'}
-                disableRipple
-                sx={{
-                  opacity: 0,
-                  animation: `${fadeIn} 3s ease-in-out forwards`,
-                  backgroundSize: '100% 100%',
-                  fontWeight: 900,
-                  color: colors.W01,
-                  backgroundColor: 'transparent',
-                  ':hover': {
-                    backgroundImage: `url('/option_hover.png')`,
-                  },
-                  ':active': {
-                    backgroundImage: `url('/option_active.png')`,
-                    color: colors.B02,
-                  },
-                }}
-                onClick={() => handleClickChoiceOption(choiceOption)}
-              >
-                {choiceOption.content}
-              </Grid2>
-            ))}
+            {tabIndex === 0 ? (
+              page?.choiceOptions.map((choiceOption) => (
+                <Grid2
+                  component={Button}
+                  key={choiceOption.choiceOptionId}
+                  container
+                  alignItems={'center'}
+                  justifyContent={'flex-start'}
+                  width={'100%'}
+                  height={'100%'}
+                  textAlign={'left'}
+                  padding={'0 1rem'}
+                  disableRipple
+                  sx={{
+                    opacity: 0,
+                    animation: `${fadeIn} 3s ease-in-out forwards`,
+                    backgroundSize: '100% 100%',
+                    fontWeight: 900,
+                    color: colors.W01,
+                    backgroundColor: 'transparent',
+                    ':hover': {
+                      backgroundImage: `url('/option_hover.png')`,
+                    },
+                    ':active': {
+                      backgroundImage: `url('/option_active.png')`,
+                      color: colors.B02,
+                    },
+                  }}
+                  onClick={() => handleClickChoiceOption(choiceOption)}
+                >
+                  {choiceOption.content}
+                </Grid2>))
+              ) : (
+                ownedItems && ownedItems.length ? (
+                  ownedItems.map((item) => {
+                  const _item = getItemDetails(item.itemId)
+
+                  if (!_item) return null;
+
+                  return (
+                    <Grid2
+                      component={Button}
+                      key={item.itemId}
+                      container
+                      alignItems={'center'}
+                      justifyContent={'flex-start'}
+                      width={'100%'}
+                      height={'100%'}
+                      textAlign={'left'}
+                      padding={'0 1rem'}
+                      disableRipple
+                      sx={{
+                        opacity: 0,
+                        animation: `${fadeIn} 3s ease-in-out forwards`,
+                        backgroundSize: '100% 100%',
+                        fontWeight: 900,
+                        color: colors.W01,
+                        backgroundColor: 'transparent',
+                        ':hover': {
+                          backgroundImage: `url('/option_hover.png')`,
+                        },
+                        ':active': {
+                          backgroundImage: `url('/option_active.png')`,
+                          color: colors.B02,
+                        },
+                      }}
+                    >
+                      <img
+                        src={_item.image}
+                        alt={_item.name}
+                        style={{ width: '4rem', height: '4rem', marginRight: '0.5rem' }}
+                      />
+                      <Grid2 container direction={'column'} flex={1}>
+                        <Grid2 sx={{ fontSize: '1.2rem' }}>{_item.name}</Grid2>
+                        <Grid2 sx={{ color: '#919191' }}>{_item.description}</Grid2>
+                      </Grid2>
+                    </Grid2>
+                  )
+                })
+                ) : (
+                  <Grid2
+                    container
+                    alignItems={'center'}
+                    justifyContent={'center'}
+                    width={'100%'}
+                    height={'100%'}
+                    gridRow={'1 / 3'}
+                    gridColumn={'1 / 3'}
+                    sx={{ color: colors.W01, fontWeight: 900 }}
+                  >
+                    주머니가 비어있습니다.
+                  </Grid2>
+                )
+              )
+            }
           </Grid2>
         </Grid2>
 

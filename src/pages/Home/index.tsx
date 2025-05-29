@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Grid2 } from '@mui/material';
 import Logo from '../../components/Logo';
 import MainBg from '../../components/MainBg';
+import ButtonUsage from '../../components/Button';
 
 export const Home = () => {
   console.log('token', localStorage.token);
@@ -11,34 +12,36 @@ export const Home = () => {
       <MainBg gap={'8.625rem'}>
         <Logo />
 
-        <Grid2
-          container
-          width={'24.75rem'}
-          alignItems={'center'}
-          justifyContent={'center'}
-          sx={{
-            aspectRatio: '396 / 80',
-            backgroundImage: `url('/btn_idle.png')`,
-            backgroundSize: 'contain',
-            ':hover': {
-              backgroundImage: `url('/btn_hover.png')`,
-            },
-            ':active': {
-              backgroundImage: `url('/btn_active.png')`,
-              '*': {
-                color: '#2d2d2d',
-              },
-            },
-            '*': {
-              color: '#cfcfcf',
-            },
-          }}
-        >
-          <Link
-            to={'/login'}
-            style={{ fontWeight: 'bold', fontSize: '1.75rem', textDecoration: 'none' }}>
-            시작
-          </Link>
+        <Grid2 sx={{ display: 'grid', gap: '1.5rem' }}>
+          <ButtonUsage>
+            <Link
+              to={'/login'}
+              style={{
+                textDecoration: 'none',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <span>로그인</span>
+            </Link>
+          </ButtonUsage>
+
+          <ButtonUsage>
+            <Link
+              to={'/register'}
+              style={{
+                textDecoration: 'none',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <span>회원가입</span>
+            </Link>
+          </ButtonUsage>
         </Grid2>
       </MainBg>
     </>

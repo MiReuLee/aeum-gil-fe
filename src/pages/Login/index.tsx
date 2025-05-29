@@ -68,7 +68,7 @@ export const Login = () => {
                 disableUnderline: true,
               },
             }}
-            sx={{ width: '24.75rem', paddingBottom: '0.5rem' }}
+            sx={{ width: 'min(24.75rem, 80vw)', paddingBottom: '0.5rem' }}
             onChange={(e) => setId(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSubmit(e)}
             className="login-id"
@@ -86,7 +86,7 @@ export const Login = () => {
                 disableUnderline: true,
               },
             }}
-            sx={{ width: '24.75rem', paddingBottom: '0.5rem' }}
+            sx={{ width: 'min(24.75rem, 80vw)', paddingBottom: '0.5rem' }}
             onChange={(e) => setPassword(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSubmit(e)}
             className="login-id"

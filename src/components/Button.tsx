@@ -9,7 +9,7 @@ type ButtonUsageProps = {
 export default function ButtonUsage({ type = 'button', children, onClick }: ButtonUsageProps) {
   return <Grid2
     container
-    width={'24.75rem'}
+    width={'min(24.75rem, 80vw)'}
     alignItems={'center'}
     justifyContent={'center'}
     sx={{

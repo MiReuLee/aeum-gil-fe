@@ -7,6 +7,7 @@ interface GameState {
   items: $Item[];
   endings: $Ending[];
   playedPages: number[];
+  ownedItems: { count: number, itemId: number }[];
 }
 
 const initialState: GameState = {
@@ -15,6 +16,7 @@ const initialState: GameState = {
   items: [],
   endings: [],
   playedPages: [],
+  ownedItems: [],
 }
 
 const gameSlice = createSlice({
@@ -38,9 +40,12 @@ const gameSlice = createSlice({
     },
     clearPlayedPages(state) {
       state.playedPages = [];
+    },
+    setOwnedItems(state, action: PayloadAction<{ count: number, itemId: number }[]>) {
+      state.ownedItems = action.payload;
     }
   },
 });
 
-export const { setChapters, setPages, setItems, setEndings, addPlayedPages, clearPlayedPages } = gameSlice.actions;
+export const { setChapters, setPages, setItems, setEndings, addPlayedPages, clearPlayedPages, setOwnedItems } = gameSlice.actions;
 export default gameSlice.reducer;

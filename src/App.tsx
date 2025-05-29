@@ -4,6 +4,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect } from 'react';
 import { ApiError, getGameChapters, getGameEndings, getGameItems, getGamePages, getStatus } from './utils/api';
 import { Button } from '@mui/material';
+import { setOwnedItems } from './store/gameSlice';
+
+// const isDev = true; // process.env.NODE_ENV === 'development';
+const isDev = false; // process.env.NODE_ENV === 'development';
 
 function App() {
   const location = useLocation();
@@ -14,9 +18,13 @@ function App() {
 
   const toLastPage = useCallback(async () => {
     try {
-      const { moveTargetType, targetId } = await getStatus();
+      if (isDev) return;
+
+      const { moveTargetType, targetId, ownedItems } = await getStatus();
   
       navigate(`/${moveTargetType === 1 ? 'pages' : 'ending'}/${targetId}`);
+
+      if (ownedItems) dispatch(setOwnedItems(ownedItems));
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {
         navigate('/chapter/1');
@@ -27,8 +35,6 @@ function App() {
   }, [navigate]);
 
   const getGameData = useCallback(async () => {
-    console.trace('getGameData');
-
     try {
       const chapters = await getGameChapters();
       const pages = await getGamePages();
@@ -58,12 +64,12 @@ function App() {
   }
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      if (location.pathname === '/login' || location.pathname === '/register') return
-
-      navigate('/login');
-    } else {
+    if (isLoggedIn) {
       getGameData();
+    } else if (location.pathname === '/login' || location.pathname === '/register') {
+      return
+    } else {
+      navigate('/login');
     }
   }, [isLoggedIn]);
 

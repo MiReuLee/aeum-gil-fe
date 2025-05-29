@@ -57,10 +57,12 @@ const get = async (url: string, { isNoCache, isText }: { isNoCache: boolean, isT
   return data;
 }
 
-const put = (url: string, body: any) => {
-  return f(url, 'PUT', body, {
+const put = async (url: string, body: any) => {
+  const res = await f(url, 'PUT', body, {
     Authorization: `Bearer ${localStorage.token}`,
   });
+
+  return await res.json();
 }
 
 const del = (url: string) => {
