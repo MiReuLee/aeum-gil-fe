@@ -9,7 +9,7 @@ import { $Chapter, $ChoiceOption, $Page } from '../../types';
 import Popup from '../../components/Popup';
 import { addPlayedPages, clearPlayedPages, setOwnedItems } from '../../store/gameSlice';
 import { logout } from '../../store/authSlice';
-import { colors, delay } from '../../utils';
+import { colors } from '../../utils';
 
 const fadeIn = keyframes`
   from {
@@ -44,7 +44,6 @@ export const Page = () => {
   const [chapter, setChapter] = useState<$Chapter | null>(null);
   const [tabIndex, setTabIndex] = useState(0); // 현재 선택된 탭의 인덱스
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [opacity, setOpacity] = useState(1); // 애니메이션 상태
   const [visible, setVisible] = useState(true); // 페이지 전환 시 fadeOut 애니메이션을 위한 상태
 
   const [contentHeight, setContentHeight] = useState(0);
@@ -84,12 +83,6 @@ export const Page = () => {
   }, [playedPages]);
 
   const handleClickChoiceOption = async (choiceOption: $ChoiceOption) => {
-    setOpacity(0);
-
-    await delay(300);
-
-    setOpacity(1);
-
     const _pageId = Number(pageId);
     
     const {
