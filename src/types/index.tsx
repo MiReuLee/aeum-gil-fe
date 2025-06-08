@@ -38,6 +38,7 @@ export interface $Ending {
   description: string;
   returnPageId: number;
   content: string;
+  isCleared: boolean;
 
   text?: string;
   img?: string;

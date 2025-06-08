@@ -51,7 +51,7 @@ export const Intro = () => {
         </Grid2>
 
         <Grid2 sx={{ display: 'grid', gap: '1.5rem' }}>
-          <button>엔딩 목록</button>
+          <Link to={'/ending-list'}>엔딩 목록</Link>
           <button>크레딧</button>
         </Grid2>
       </MainBg>

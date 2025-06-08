@@ -18,6 +18,7 @@ import { Chapter } from './pages/Chapter/index.tsx';
 import { Ending } from './pages/Ending/index.tsx';
 import { Register } from './pages/Register/index.tsx';
 import { Intro } from './pages/Intro/index.tsx';
+import { EndingList } from './pages/EndingList/index.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -34,6 +35,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/pages/:pageId" element={<Page />} />
           <Route path="/chapter/:chapterId" element={<Chapter />} />
           <Route path="/ending/:endingId" element={<Ending />} />
+          <Route path="/ending-list" element={<EndingList />} />
         </Routes>
         
         <App />
