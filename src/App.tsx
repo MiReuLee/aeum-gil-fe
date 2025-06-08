@@ -69,8 +69,10 @@ function App() {
   useEffect(() => {
     if (isLoggedIn) {
       getGameData();
+    } else if (location.pathname !== '/login' && location.pathname !== '/register') {
+      navigate('/');
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, getGameData, navigate, location.pathname]);
 
   return (
     <>
