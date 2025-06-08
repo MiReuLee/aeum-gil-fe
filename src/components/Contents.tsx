@@ -13,7 +13,6 @@ type ContentsProps = {
   children?: React.ReactNode;
   title: string;
   img: string;
-  isEnding: boolean;
   onClick?: () => void;
 };
 

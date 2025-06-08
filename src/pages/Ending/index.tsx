@@ -61,7 +61,6 @@ export const Ending = () => {
       <Contents
         title={ending?.title || ''}
         img={ending?.img || ''}
-        isEnding
         onClick={handleClick}
       >
         {ending?.text}

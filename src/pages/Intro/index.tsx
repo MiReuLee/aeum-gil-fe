@@ -6,6 +6,7 @@ import MainBg from '../../components/MainBg';
 import { ApiError, getStatus, restoreGameReords } from '../../utils/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { clearPlayedPages, setOwnedItems } from '../../store/gameSlice';
+import { colors } from '../../utils';
 
 export const Intro = () => {
   const dispatch = useDispatch();
@@ -50,9 +51,31 @@ export const Intro = () => {
           </ButtonUsage>
         </Grid2>
 
-        <Grid2 sx={{ display: 'grid', gap: '1.5rem' }}>
+        <Grid2
+          position={'relative'}
+          width={'100%'}
+          display={'flex'}
+          justifyContent={'center'}
+          sx={{
+            gap: '1.5rem',
+            ':after': {
+              content: '""',
+              width: '100%',
+              height: '2px',
+              background: 'url(/border_intro_btn.png) no-repeat center center',
+              position: 'absolute',
+              bottom: '-10px',
+            },
+            '> *': {
+              textDecoration: 'none',
+              color: colors.B01,
+              fontWeight: 'bold',
+              fontSize: '1.5rem',
+            }
+          }}
+        >
           <Link to={'/ending-list'}>엔딩 목록</Link>
-          <button>크레딧</button>
+          <Link to={'/credit'}>크레딧</Link>
         </Grid2>
       </MainBg>
     </>
