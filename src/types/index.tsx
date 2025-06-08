@@ -10,7 +10,7 @@ export interface $ChoiceOption {
   content: string;
   targetId: number;
   moveTargetType: 1 | 2; // 1: page, 2: ending
-  items: [];
+  items: { actionType: number; itemId: number }[];
 }
 
 export interface $Page {
