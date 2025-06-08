@@ -17,6 +17,7 @@ import { Page } from './pages/Page/index.tsx';
 import { Chapter } from './pages/Chapter/index.tsx';
 import { Ending } from './pages/Ending/index.tsx';
 import { Register } from './pages/Register/index.tsx';
+import { Intro } from './pages/Intro/index.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -24,6 +25,7 @@ createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <Routes>
           <Route index element={<Home />} />
+          <Route path="/intro" element={<Intro />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           {/* <Route path="/journey" element={<Journey />} /> */}

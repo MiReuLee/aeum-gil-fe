@@ -4,11 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect } from 'react';
 import { ApiError, getGameChapters, getGameEndings, getGameItems, getGamePages, getStatus } from './utils/api';
 import { Button } from '@mui/material';
-import { setOwnedItems } from './store/gameSlice';
 import { logout } from './store/authSlice';
-
-// const isDev = true; // process.env.NODE_ENV === 'development';
-const isDev = false; // process.env.NODE_ENV === 'development';
+import { setOwnedItems } from './store/gameSlice';
 
 function App() {
   const location = useLocation();
@@ -19,11 +16,14 @@ function App() {
 
   const toLastPage = useCallback(async () => {
     try {
-      if (isDev) return;
-
       const { moveTargetType, targetId, ownedItems } = await getStatus();
+
+      const toPageLink = `/${moveTargetType === 1 ? 'pages' : 'ending'}/${targetId}`
+
+      // 현재 위치가 이동할 페이지와 같으면 리턴
+      if (location.pathname === toPageLink) return;
   
-      navigate(`/${moveTargetType === 1 ? 'pages' : 'ending'}/${targetId}`);
+      navigate(toPageLink);
 
       if (ownedItems) dispatch(setOwnedItems(ownedItems));
     } catch (e) {
@@ -33,7 +33,7 @@ function App() {
         throw e;
       }
     }
-  }, [navigate]);
+  }, [dispatch, navigate, location.pathname]);
 
   const getGameData = useCallback(async () => {
     try {
@@ -46,10 +46,6 @@ function App() {
       dispatch({ type: 'game/setPages', payload: pages });
       dispatch({ type: 'game/setItems', payload: items });
       dispatch({ type: 'game/setEndings', payload: enddings });
-
-      if (!location.pathname.startsWith('/journey')) {
-        await toLastPage();
-      }
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) {
         dispatch(logout());
@@ -59,7 +55,7 @@ function App() {
         console.error('Error fetching game data:', e);
       }
     }
-  }, [dispatch, location.pathname, navigate, toLastPage]);
+  }, [dispatch, location.pathname, navigate]);
 
   const resetLocalStorage = () => {
     localStorage.clear();
@@ -67,12 +63,21 @@ function App() {
   }
 
   useEffect(() => {
+    // 로그인 상태일 시
     if (isLoggedIn) {
-      getGameData();
-    } else if (location.pathname !== '/login' && location.pathname !== '/register') {
+      getGameData().then(() => {
+        // 로그인 / 회원가입 페이지일 경우 Intro로 이동
+        if (location.pathname === '/login' || location.pathname === '/register') {
+          navigate('/intro');
+        } else if (location.pathname.includes('/pages/') || location.pathname.includes('/ending/')) {
+          toLastPage();
+        }
+      });
+    } else if (location.pathname !== '/login' && location.pathname !== '/register') { // 로그인 / 회원가입 페이지가 아닐 경우
+      // 랜딩 페이지로 이동
       navigate('/');
     }
-  }, [isLoggedIn, getGameData, navigate, location.pathname]);
+  }, [isLoggedIn, getGameData, navigate, location.pathname, toLastPage]);
 
   return (
     <>

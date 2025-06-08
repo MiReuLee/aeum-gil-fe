@@ -5,8 +5,6 @@ import MainBg from '../../components/MainBg';
 import ButtonUsage from '../../components/Button';
 
 export const Home = () => {
-  console.log('token', localStorage.token);
-
   return (
     <>
       <MainBg gap={'8.625rem'}>
