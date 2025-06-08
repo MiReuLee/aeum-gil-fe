@@ -218,7 +218,7 @@ export const Page = () => {
         </Grid2>
 
         {/* Tab 선택지 / 주머니 */}
-        <Grid2 container maxHeight={'300px'} direction={'column'} width={'100%'} flex={1}>
+        <Grid2 container maxHeight={'300px'} direction={'column'} width={'100%'} flex={1} overflow={'hidden'}>
           <Tabs
             value={tabIndex}
             onChange={(_, newValue) => setTabIndex(newValue)}
@@ -255,7 +255,12 @@ export const Page = () => {
                 ...padding[theme.breakpoints.up('md')],
                 gridTemplateColumns: '1fr 1fr',
                 gridTemplateRows: '1fr 1fr'
-              }
+              },
+
+              [theme.breakpoints.down('md')]: (tabIndex === 1 ? {
+                overflow: 'auto',
+                gap: '0.5rem'
+              } : {})
             }}
           >
             {tabIndex === 0 ? (
