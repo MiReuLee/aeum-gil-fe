@@ -5,6 +5,7 @@ import { useCallback, useEffect } from 'react';
 import { ApiError, getGameChapters, getGameEndings, getGameItems, getGamePages, getStatus } from './utils/api';
 import { Button } from '@mui/material';
 import { setOwnedItems } from './store/gameSlice';
+import { logout } from './store/authSlice';
 
 // const isDev = true; // process.env.NODE_ENV === 'development';
 const isDev = false; // process.env.NODE_ENV === 'development';
@@ -51,7 +52,9 @@ function App() {
       }
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) {
-        navigate('/login');
+        dispatch(logout());
+
+        navigate('/');
       } else {
         console.error('Error fetching game data:', e);
       }
@@ -66,10 +69,6 @@ function App() {
   useEffect(() => {
     if (isLoggedIn) {
       getGameData();
-    } else if (location.pathname === '/login' || location.pathname === '/register') {
-      return
-    } else {
-      navigate('/login');
     }
   }, [isLoggedIn]);
 

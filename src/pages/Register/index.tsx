@@ -5,6 +5,7 @@ import ButtonUsage from '../../components/Button';
 import Logo from '../../components/Logo';
 import MainBg from '../../components/MainBg';
 import { signUp } from '../../utils/api';
+import { Link } from 'react-router-dom';
 
 export const Register = () => {
   const dispatch = useDispatch();
@@ -56,7 +57,9 @@ export const Register = () => {
   return (
     <>
       <MainBg gap={'10rem'}>
-        <Logo />
+        <Link to={'/'}>
+          <Logo />
+        </Link>
 
         <Grid2
           container component="form" direction={'column'} alignItems={'center'} justifyContent={'center'} gap={'1rem'}

@@ -5,6 +5,7 @@ import ButtonUsage from '../../components/Button';
 import Logo from '../../components/Logo';
 import MainBg from '../../components/MainBg';
 import { login } from '../../utils/api';
+import { Link } from 'react-router-dom';
 
 export const Login = () => {
   const dispatch = useDispatch();
@@ -50,7 +51,9 @@ export const Login = () => {
   return (
     <>
       <MainBg gap={'10rem'}>
-        <Logo />
+        <Link to={'/'}>
+          <Logo />
+        </Link>
 
         <Grid2
           container component="form" direction={'column'} alignItems={'center'} justifyContent={'center'} gap={'1rem'}
