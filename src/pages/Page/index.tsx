@@ -151,7 +151,13 @@ export const Page = () => {
             padding: '1rem'
           }}
         >
-          {chapter?.title} - {page?.place}
+          <span
+            style={{
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis'
+            }}
+          >{chapter?.title} - {page?.place}</span>
 
           <Button
             sx={{
