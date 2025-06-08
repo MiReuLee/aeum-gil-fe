@@ -84,13 +84,25 @@ export const Page = () => {
 
   const handleClickChoiceOption = async (choiceOption: $ChoiceOption) => {
     const _pageId = Number(pageId);
+
+    // 선택지에 필요한 아이템이 있는지 확인
+    const requiredItems = choiceOption.items.filter(e => e.actionType === 2);
+
+    if (requiredItems.length) {
+      const hasAllItems = requiredItems.every(item => ownedItems.some(ownedItem => ownedItem.itemId === item.itemId));
+
+      if (!hasAllItems) {
+        alert('필요한 아이템이 부족합니다.');
+        return;
+      }
+    }
     
     const {
-      moveTargetType: _moveTargetType, ownedItems, targetId: _targetId
+      moveTargetType: _moveTargetType, ownedItems: ownedItems2, targetId: _targetId
     } = await putGameRecords({ pageId: _pageId, choiceOptionId: choiceOption.choiceOptionId });
     
     dispatch(addPlayedPages(_pageId));
-    if (ownedItems) dispatch(setOwnedItems(ownedItems));
+    if (ownedItems2) dispatch(setOwnedItems(ownedItems2));
     navigate(`/${_moveTargetType === 1 ? 'pages' : 'ending'}/${_targetId}`);
   };
 
