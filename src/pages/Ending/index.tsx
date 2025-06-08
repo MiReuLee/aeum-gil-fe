@@ -86,7 +86,7 @@ export const Ending = () => {
               </ButtonUsage>
             </Grid2>
           ) : (
-            <ButtonUsage onClick={handleClick}>
+            <ButtonUsage onClick={() => handleClick()}>
               <span>
                 이전 선택으로 돌아가기
               </span>
