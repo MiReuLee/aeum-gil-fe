@@ -20,6 +20,15 @@ const fadeIn = keyframes`
   }
 `;
 
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
+
 export const Page = () => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -52,6 +61,7 @@ export const Page = () => {
     const newPage = pages.find((p) => String(p.pageId) === pageId) as $Page;
     if (newPage) {
       setPage({ ...newPage, ...JSON.parse(newPage.content) });
+      setVisible(false);
     }
   }, [pageId, pages])
   
@@ -65,12 +75,12 @@ export const Page = () => {
     // 데이터가 바뀌면 visible을 true로 설정
     setVisible(true);
 
-    // 0.3초 뒤에 false로 변경하여 opacity 0 적용
+    // 3초 뒤에 false로 변경하여 opacity 0 적용
     const timer = setTimeout(() => {
       setVisible(false);
-    }, 300);
+    }, 2000);
 
-    return () => clearTimeout(timer); // 정리
+    return () => clearTimeout(timer);
   }, [page]);
 
   const contentRef = useRef<HTMLDivElement>(null);
@@ -132,8 +142,7 @@ export const Page = () => {
           background: colors.W00, position: 'relative', overflow: 'hidden',
         }}
       >
-        <Grid2
-          key={page?.pageId}
+        {visible && (<Grid2
           position={'absolute'}
           top={0}
           left={0}
@@ -143,10 +152,9 @@ export const Page = () => {
           sx={{
             background: '#000',
             pointerEvents: 'none',
-            opacity: visible ? 1 : 0,
-            transition: 'opacity 3s ease-in-out',
+            animation: `${fadeOut} 2s ease-in-out forwards`,
           }}
-        />
+        />)}
 
         {/* Top Bar */}
         <Grid2
