@@ -65,10 +65,10 @@ function App() {
     }
   }, [dispatch, location.pathname, navigate]);
 
-  const resetLocalStorage = () => {
-    localStorage.clear();
-    window.location.reload();
-  }
+  // const resetLocalStorage = () => {
+  //   localStorage.clear();
+  //   window.location.reload();
+  // }
 
   useEffect(() => {
     // 로그인 상태일 시
