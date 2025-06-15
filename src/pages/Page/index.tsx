@@ -274,7 +274,15 @@ export const Page = () => {
               [theme.breakpoints.up('md')]: {
                 ...padding[theme.breakpoints.up('md')],
                 gridTemplateColumns: '1fr 1fr',
-                gridTemplateRows: '1fr 1fr'
+                ...(tabIndex === 0 ? {
+                  gridTemplateRows: '1fr 1fr'
+                } : {
+                  overflow: 'auto',
+                  gap: '1rem',
+                  padding: `1rem ${100 / 6}%`
+                })
+                
+                
               },
 
               [theme.breakpoints.down('md')]: (tabIndex === 1 ? {
