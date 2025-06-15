@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect } from 'react';
 import { ApiError, getGameChapters, getGameEndings, getGameItems, getGamePages, getStatus } from './utils/api';
-import { Button } from '@mui/material';
+// import { Button } from '@mui/material';
 import { logout } from './store/authSlice';
 import { setOwnedItems } from './store/gameSlice';
 
@@ -37,6 +37,10 @@ function App() {
 
   const getGameData = useCallback(async () => {
     try {
+      const { ownedItems } = await getStatus();
+
+      if (ownedItems) dispatch(setOwnedItems(ownedItems));
+
       const chapters = await getGameChapters();
       const pages = await getGamePages();
       const items = await getGameItems();
@@ -53,6 +57,10 @@ function App() {
         navigate('/');
       } else {
         console.error('Error fetching game data:', e);
+
+        dispatch(logout());
+
+        navigate('/');
       }
     }
   }, [dispatch, location.pathname, navigate]);
@@ -81,9 +89,9 @@ function App() {
 
   return (
     <>
-      <Button onClick={resetLocalStorage} sx={{ width: '100%' }}>
+      {/* <Button onClick={resetLocalStorage} sx={{ width: '100%' }}>
         로컬 스토리지 초기화
-      </Button>
+      </Button> */}
     </>
   );
 };

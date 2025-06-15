@@ -5,7 +5,7 @@ import Logo from '../../components/Logo';
 import MainBg from '../../components/MainBg';
 import { ApiError, getStatus, restoreGameReords } from '../../utils/api';
 import { Link, useNavigate } from 'react-router-dom';
-import { clearPlayedPages, setOwnedItems } from '../../store/gameSlice';
+import { clearPlayedPages } from '../../store/gameSlice';
 import { colors } from '../../utils';
 
 export const Intro = () => {
@@ -14,11 +14,9 @@ export const Intro = () => {
 
   const toLastPage = async () => {
     try {
-      const { moveTargetType, targetId, ownedItems } = await getStatus();
+      const { moveTargetType, targetId } = await getStatus();
   
       navigate(`/${moveTargetType === 1 ? 'pages' : 'ending'}/${targetId}`);
-
-      if (ownedItems) dispatch(setOwnedItems(ownedItems));
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {
         navigate('/chapter/1');
