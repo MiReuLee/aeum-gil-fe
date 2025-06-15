@@ -10,7 +10,7 @@ import { RootState } from '../../store';
 export const EndingList = () => {
   const dispatch = useDispatch();
   const endings = useSelector((state: RootState) => state.game.endings
-    .filter(ending => !ending.isCleared)
+    .filter(ending => ending.isCleared)
     .map(e => ({ ...e, ...JSON.parse(e.content) }))
   );
 
