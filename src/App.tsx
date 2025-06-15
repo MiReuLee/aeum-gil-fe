@@ -18,14 +18,14 @@ function App() {
     try {
       const { moveTargetType, targetId, ownedItems } = await getStatus();
 
+      if (ownedItems) dispatch(setOwnedItems(ownedItems));
+
       const toPageLink = `/${moveTargetType === 1 ? 'pages' : 'ending'}/${targetId}`
 
       // 현재 위치가 이동할 페이지와 같으면 리턴
       if (location.pathname === toPageLink) return;
   
       navigate(toPageLink);
-
-      if (ownedItems) dispatch(setOwnedItems(ownedItems));
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {
         navigate('/chapter/1');
