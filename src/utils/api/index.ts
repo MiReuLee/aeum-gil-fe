@@ -146,4 +146,6 @@ export const getGameEndingsNonCache = async () => await get('game/endings', { is
 
 export const putGameRecords = async (records: { pageId: number, choiceOptionId: number }) => await put('game/play-records', records);
 
+export const putEndingRecords = async (endingId: number) => await put('game/ending-records', { endingId });
+
 export const restoreGameReords = async (pageId: number) => await put('game/play-status/restore', { pageId })

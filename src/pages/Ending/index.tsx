@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { RootState } from '../../store';
 import { $Ending } from '../../types';
-import { restoreGameReords } from '../../utils/api';
+import { restoreGameReords, putEndingRecords } from '../../utils/api';
 import { clearPlayedPages } from '../../store/gameSlice';
 import { Contents } from '../../components/Contents';
 import { Grid2 } from '@mui/material';
@@ -37,6 +37,8 @@ export const Ending = () => {
           text,
           img,
         });
+
+        putEndingRecords(Number(endingId))
       }
     }
   }, [endings, endingId]);
