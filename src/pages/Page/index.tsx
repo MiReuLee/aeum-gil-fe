@@ -95,6 +95,23 @@ export const Page = () => {
   const handleClickChoiceOption = async (choiceOption: $ChoiceOption) => {
     const _pageId = Number(pageId);
 
+    // 별도 예외 처리
+    // - 손전등(11) 소지 체크 필요 : 167, 190 페이지
+    // - 무기(12) 소지 체크 필요 : 210, 254 페이지
+    if (pageId === '167'  || pageId === '190') {
+      const hasFlashlight = ownedItems.some(item => item.itemId === 11);
+      if (!hasFlashlight) {
+        alert('손전등이 필요합니다.');
+        return;
+      }
+    } else if (pageId === '210' || pageId === '254') {
+      const hasWeapon = ownedItems.some(item => item.itemId === 12);
+      if (!hasWeapon) {
+        alert('무기가 필요합니다.');
+        return;
+      }
+    }
+
     // 선택지에 필요한 아이템이 있는지 확인
     const requiredItems = choiceOption.items.filter(e => e.actionType === 2);
 
