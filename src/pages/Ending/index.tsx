@@ -56,6 +56,8 @@ export const Ending = () => {
     navigate(`/pages/${returnPageId}`);
   }
 
+  const toIntro = () => navigate('/intro');
+
   return (
     isShowContents ? (
       <Contents
@@ -70,9 +72,9 @@ export const Ending = () => {
         <MainBg gap={'0'} colorBg='dark'>
           <h1 className="old-newspaper" style={{ color: '#ebebeb', fontSize: '88px' }}>The End</h1>
 
-          {endingId === '8' || endingId === '0' ? (
+          {endingId === '8' || endingId === '9' ? (
             <Grid2 container spacing={2}>
-              <ButtonUsage onClick={() => handleClick(233)}>
+              <ButtonUsage onClick={toIntro}>
                 <span>
                   이대로 끝내기
                 </span>
