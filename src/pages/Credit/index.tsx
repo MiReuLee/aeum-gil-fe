@@ -53,9 +53,11 @@ export const Credit = () => {
       <Grid2
         container
         flex={1}
+        flexDirection={'column'}
         width={'100%'}
-        alignItems={'baseline'}
-        justifyContent={'center'}
+        alignItems={'center'}
+        justifyContent={'flex-start'}
+        gap={2}
         padding={'5rem 0'}
         sx={{
           background: '#161616',
