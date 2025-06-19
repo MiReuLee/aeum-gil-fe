@@ -98,13 +98,17 @@ export const Page = () => {
     // 별도 예외 처리
     // - 손전등(11) 소지 체크 필요 : 167, 190 페이지
     // - 무기(12) 소지 체크 필요 : 210, 254 페이지
-    if (pageId === '167'  || pageId === '190') {
+    // - 167 페이지 : 187
+    // - 190 페이지 : 218
+    // - 210 페이지 : 242
+    // - 254 페이지 : 275
+    if ((pageId === '167' && choiceOption.choiceOptionId === 187) || (pageId === '190' && choiceOption.choiceOptionId === 218)) {
       const hasFlashlight = ownedItems.some(item => item.itemId === 11);
       if (!hasFlashlight) {
         alert('손전등이 필요합니다.');
         return;
       }
-    } else if (pageId === '210' || pageId === '254') {
+    } else if ((pageId === '210' && choiceOption.choiceOptionId === 242) || (pageId === '254' && choiceOption.choiceOptionId === 275)) {
       const hasWeapon = ownedItems.some(item => item.itemId === 12);
       if (!hasWeapon) {
         alert('무기가 필요합니다.');
