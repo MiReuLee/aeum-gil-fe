@@ -386,7 +386,9 @@ export const Page = () => {
                       />
                       <Grid2 container direction={'column'} flex={1}>
                         <Grid2 sx={{ fontSize: '1.2rem' }}>{_item.name}</Grid2>
-                        <Grid2 sx={{ color: '#919191' }}>{_item.description}</Grid2>
+                        <Grid2 sx={{ color: '#919191' }}>
+                          <span dangerouslySetInnerHTML={{ __html: _item.description.replace(/\\n/gi, '<br />') }} />
+                        </Grid2>
                       </Grid2>
                     </Grid2>
                   )
