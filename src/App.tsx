@@ -18,7 +18,7 @@ function App() {
     try {
       const { moveTargetType, targetId, ownedItems } = await getStatus();
 
-      if (ownedItems) dispatch(setOwnedItems(ownedItems));
+      dispatch(setOwnedItems(ownedItems || []));
 
       const toPageLink = `/${moveTargetType === 1 ? 'pages' : 'ending'}/${targetId}`
 
@@ -39,7 +39,7 @@ function App() {
     try {
       const { ownedItems } = await getStatus();
 
-      if (ownedItems) dispatch(setOwnedItems(ownedItems));
+      dispatch(setOwnedItems(ownedItems || []));
 
       const chapters = await getGameChapters();
       const pages = await getGamePages();
